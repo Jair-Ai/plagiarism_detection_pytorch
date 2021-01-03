@@ -10,7 +10,10 @@ import pandas as pd
 import joblib
 
 ## TODO: Import any additional libraries you need to define a model
-
+from sklearn.svm import SVC
+from sklearn.metrics import make_scorer
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
 
 # Provided model load function
 def model_fn(model_dir):
@@ -56,14 +59,22 @@ if __name__ == '__main__':
     
     
     ## --- Your code here --- ##
-    
+    classificator = SVC()
+    param_grid = {'C': [1e3, 5e3, 1e4, 5e4], 'gamma': [0.0001, 0.005, 0.01, 0.1], }
+    scoring = {'AUC': 'roc_auc', 'Accuracy': make_scorer(accuracy_score)}
+    # Run the grid search
+    grid_obj = GridSearchCV(classificator, param_grid, scoring=acc_scorer, refit='AUC')
+    grid_obj = grid_obj.fit(X_train, y_train)
 
-    ## TODO: Define a model 
-    model = None
+    # Set the clf to the best combination of parameters
+    model = grid_obj.best_estimator_
+
+    # Fit the best algorithm to the data. 
+    model.fit(X_train, y_train)
     
     
     ## TODO: Train the model
-    
+    model.fit(train_x, train_y)
     
     
     ## --- End of your code  --- ##
